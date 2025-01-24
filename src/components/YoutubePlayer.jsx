@@ -1,0 +1,21 @@
+const YoutubePlayer = ({ video_id }) => {
+  return (
+    <div className="flex justify-around ml-8">
+      <div className="mr-8">
+        <iframe
+          src={`https://www.youtube.com/embed/${video_id}?rel=0&title=0&controls=1`}
+          className="w-[1024px] h-[576px]"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div>
+        <textarea name="notes" id="" className="bg-black"></textarea>
+      </div>
+    </div>
+  );
+};
+
+export default YoutubePlayer;
