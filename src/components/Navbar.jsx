@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import logo from "/quiyt-logo.png";
+import logo from "/quiyt-new-logo.png";
 import {
   SignedIn,
   SignedOut,
@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="py-3 flex justify-between items-center">
+    <div className="py-1 px-12 flex justify-between items-center">
       <div>
         <Link to="/">
           <img src={logo} alt="Quiyt Logo" className="md:w-28 rounded" />

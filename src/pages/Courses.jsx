@@ -29,30 +29,34 @@ const Courses = () => {
   }, [courses, isLoaded]);
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 px-12">
       <h1 className="text-center text-3xl font-semibold mb-8">Your Courses</h1>
-      {userCourses?.map(({ $id, course_title, $createdAt }) => (
-        <Card
-          key={$id}
-          className="text-center w-fit border-4 border-purple-300 rounded-md"
-        >
-          <img src="/video-icon.png" className="w-48 mx-auto " />
-          <CardHeader className="bg-purple-200">
-            <CardTitle className="text-md sm:text-xl">{course_title}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col bg-purple-200">
-            <p className="text-sm">
-              <span className="font-medium">Created on :</span>{" "}
-              <span>{new Date($createdAt).toDateString()}</span>
-            </p>
-          </CardContent>
-          <CardFooter className="bg-purple-200">
-            <Link to={`/course/${$id}`} className="mx-auto">
-              <Button className="px-6">Go to course</Button>
-            </Link>
-          </CardFooter>
-        </Card>
-      ))}
+      <div className="flex gap-4">
+        {userCourses?.map(({ $id, course_title, $createdAt }) => (
+          <Card
+            key={$id}
+            className="text-center w-72 border-4 border-purple-300 bg-purple-200 rounded-md"
+          >
+            <img src="/video-icon.png" className="px-12 bg-white mx-auto" />
+            <CardHeader>
+              <CardTitle className="text-md sm:text-xl">
+                {course_title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col">
+              <p className="text-sm">
+                <span className="font-medium">Created on :</span>{" "}
+                <span>{new Date($createdAt).toDateString()}</span>
+              </p>
+            </CardContent>
+            <CardFooter className="">
+              <Link to={`/course/${$id}`} className="mx-auto">
+                <Button className="px-6">Go to course</Button>
+              </Link>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
