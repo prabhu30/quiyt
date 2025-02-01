@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TvMinimalPlay } from "lucide-react";
 
 const Course = () => {
   const { isLoaded } = useUser();
@@ -37,16 +44,27 @@ const Course = () => {
               const index = video_link.indexOf("?v=");
               const video_id = video_link.slice(index + 3, index + 14);
               return (
-                <Button
-                  key={$id}
-                  variant="ghost"
-                  className={`w-full justify-start text-wrap my-1 text-left text-md py-8 ${
-                    videoId === video_id ? "bg-gray-200" : ""
-                  }`}
-                  onClick={() => setVideoId(video_id)}
-                >
-                  {video_title}
-                </Button>
+                <TooltipProvider key={$id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center">
+                        <Button
+                          variant="ghost"
+                          className={`text-md my-1 h-12 hover:rounded hover:bg-gray-300 ${
+                            videoId === video_id ? "bg-gray-300" : ""
+                          }`}
+                          onClick={() => setVideoId(video_id)}
+                        >
+                          <TvMinimalPlay />
+                          {video_title}
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{video_title}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               );
             })
           ) : (
