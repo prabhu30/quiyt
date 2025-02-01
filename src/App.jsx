@@ -1,13 +1,13 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AppLayout from "./layout.jsx/AppLayout";
+import AppLayout from "./layout/AppLayout";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Course from "./pages/Course";
 import CreateCourse from "./pages/CreateCourse";
-import { CoursesProvider } from "./lib/context/courses";
-import { VideosProvider } from "./lib/context/Videos";
+import { CoursesProvider } from "../src/lib/context/courses";
+import { VideosProvider } from "../src/lib/context/Videos";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
