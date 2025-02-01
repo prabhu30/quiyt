@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCourses } from "@/lib/context/courses";
+import { useCourses } from "@/lib/context/Courses";
 import { useVideos } from "@/lib/context/Videos";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
