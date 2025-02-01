@@ -6,8 +6,8 @@ import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Course from "./pages/Course";
 import CreateCourse from "./pages/CreateCourse";
-import { CoursesProvider } from "../src/lib/context/courses";
-import { VideosProvider } from "../src/lib/context/Videos";
+import { CoursesProvider } from "./lib/context/Courses";
+import { VideosProvider } from "./lib/context/Videos";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
