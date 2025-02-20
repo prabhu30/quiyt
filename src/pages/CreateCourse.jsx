@@ -55,22 +55,25 @@ const CreateCourse = () => {
     setTimeout(() => setError(""), 3000);
   };
 
+  const extractYoutubeVideoId = (url) => {
+    const regex =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
   // Add a video to the course
   const handleAddVideo = async () => {
     try {
       setError("");
-      const videoLink = videoLinkRef.current.value;
-      const videoIdMatch = videoLink.match(
-        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/
-      );
+      let videoLink = videoLinkRef.current.value;
+      const videoId = extractYoutubeVideoId(videoLink);
 
-      if (!videoIdMatch) {
+      if (!videoId) {
         return setTemporaryError(
           "Invalid YouTube URL. Use 'https://youtube.com/watch?v=<videoID>'."
         );
       }
-
-      const videoId = videoIdMatch[1];
 
       if (
         courseContent.courseVideos.some(
@@ -81,14 +84,7 @@ const CreateCourse = () => {
       }
 
       const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/videos`,
-        {
-          params: {
-            part: "snippet",
-            id: videoId,
-            key: YOUTUBE_API_KEY,
-          },
-        }
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${YOUTUBE_API_KEY}&part=snippet`
       );
 
       if (response.data.items.length === 0) {
@@ -131,6 +127,7 @@ const CreateCourse = () => {
             video_title: video.title,
             video_link: video.videoLink,
             course_id: newCourse.$id,
+            is_watched: false,
           })
         )
       );
@@ -152,7 +149,7 @@ const CreateCourse = () => {
         <Label className="text-lg md:text-2xl">Name of the course</Label>
         <Input
           placeholder="Complete React Course, VueJS A to Z, ..."
-          className="w-full mt-4 mx-auto lg:mx-0 lg:w-2/3 rounded-none border-2 border-gray-500"
+          className="w-full mt-4 mx-auto lg:mx-0 lg:w-2/3 text-amber-700 font-semibold rounded-none border-2 border-gray-500"
           ref={courseTitleRef}
         />
 

@@ -57,6 +57,23 @@ export function VideosProvider(props) {
     }
   }
 
+  async function updateVideo(videoId, data) {
+    try {
+      console.log("video marking as complete with data : ", videoId);
+      const response = await databases.updateDocument(
+        COURSES_DATABASE_ID,
+        VIDEOS_COLLECTION_ID,
+        videoId,
+        data
+      );
+      console.log(response);
+
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async function init() {
     try {
       const response = await databases.listDocuments(
@@ -76,7 +93,7 @@ export function VideosProvider(props) {
 
   return (
     <VideosContext.Provider
-      value={{ current: videos, add, remove, getVideosByCourseId }}
+      value={{ current: videos, add, remove, getVideosByCourseId, updateVideo }}
     >
       {props.children}
     </VideosContext.Provider>
