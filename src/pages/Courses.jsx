@@ -6,27 +6,42 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCourses } from "@/lib/context/Courses";
+import { getCourses } from "@/store/courseSlice";
 import { useUser } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import MoonLoader from "react-spinners/MoonLoader";
 
 const Courses = () => {
   const { user, isLoaded } = useUser();
-  const courses = useCourses();
-  const [userCourses, setUserCourses] = useState([]);
+
+  const {
+    courses: userCourses,
+    isLoading: isLoadingCourses,
+    error,
+  } = useSelector((state) => state.courses);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const handleFetchCourses = async () => {
-      const userCoursesRes = await courses.getCourseByAuthorId(user.id);
-      console.log(userCoursesRes);
-      setUserCourses(userCoursesRes?.documents);
-    };
+    const handleFetchCourses = async () => dispatch(getCourses(user.id));
+    if (isLoaded) handleFetchCourses();
+  }, [dispatch, isLoaded, user]);
 
-    if (isLoaded) {
-      handleFetchCourses();
-    }
-  }, [courses, isLoaded]);
+  if (error !== null) {
+    return (
+      <div className="text-center">
+        <h1 className="text-3xl my-6 font-semibold">
+          Error while fetching courses
+        </h1>
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (isLoadingCourses || !isLoaded) {
+    return <MoonLoader className="mt-8 mx-auto" />;
+  }
 
   return (
     <div className="mt-6 px-12">
@@ -41,7 +56,7 @@ const Courses = () => {
           </Link>
         </div>
       ) : (
-        <div className="flex gap-4">
+        <div className="flex flex-wrap justify-start gap-y-8 gap-4">
           {userCourses?.map(({ $id, course_title, $createdAt }) => (
             <Card
               key={$id}

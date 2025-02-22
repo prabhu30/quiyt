@@ -6,7 +6,9 @@ const AppLayout = () => {
     <div>
       <main className="min-h-screen container">
         <Navbar />
-        <Outlet />
+        <div className="pt-16">
+          <Outlet />
+        </div>
       </main>
       <div className="text-center pb-6 mt-8">
         Made with 🔥 by Prabhu Kalyan Korivi

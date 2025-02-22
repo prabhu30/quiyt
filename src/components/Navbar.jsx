@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="py-1 px-12 flex justify-between items-center">
+    <div className="py-1 px-12 flex justify-between items-center fixed z-10 bg-white w-full">
       <div>
         <Link to="/">
           <img src={logo} alt="Quiyt Logo" className="md:w-28 rounded" />

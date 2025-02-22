@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCourses } from "@/lib/context/Courses";
-import { useVideos } from "@/lib/context/Videos";
 import { useUser } from "@clerk/clerk-react";
-import axios from "axios";
 import { Trash2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AiFillYoutube } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { extractYoutubeVideoId } from "@/utils/helpers";
+import { useDispatch } from "react-redux";
+import { createCourse } from "@/store/courseSlice";
+import { createVideos } from "@/store/videoSlice";
 
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 const LOCAL_STORAGE_KEY = "courseContent";
@@ -18,14 +20,15 @@ const CreateCourse = () => {
     title: "",
     courseVideos: [],
   });
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   const courseTitleRef = useRef();
   const videoLinkRef = useRef();
 
-  const courses = useCourses();
-  const videos = useVideos();
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const { user } = useUser();
 
@@ -53,13 +56,6 @@ const CreateCourse = () => {
   const setTemporaryError = (msg) => {
     setError(msg);
     setTimeout(() => setError(""), 3000);
-  };
-
-  const extractYoutubeVideoId = (url) => {
-    const regex =
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
   };
 
   // Add a video to the course
@@ -115,28 +111,38 @@ const CreateCourse = () => {
   // Create the course
   const handleCreateCourse = async () => {
     try {
+      setMessage("Creating course...");
       const courseTitle = courseTitleRef.current.value;
-      const newCourse = await courses.add({
-        course_title: courseTitle,
-        author_id: user.id,
-      });
 
-      await Promise.all(
-        courseContent.courseVideos.map((video) =>
-          videos.add({
+      const resultAction = await dispatch(
+        createCourse({
+          course_title: courseTitle,
+          author_id: user.id,
+        })
+      );
+      setMessage("Course created successfully! Redirecting...");
+
+      if (createCourse.fulfilled.match(resultAction)) {
+        const newCourse = resultAction.payload;
+
+        const videosList = courseContent.courseVideos.map((video) => {
+          return {
             video_title: video.title,
             video_link: video.videoLink,
             course_id: newCourse.$id,
             is_watched: false,
-          })
-        )
-      );
+          };
+        });
 
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      setCourseContent({ title: "", courseVideos: [] });
-      setMessage("Course created successfully! Redirecting...");
+        await dispatch(createVideos(videosList));
 
-      setTimeout(() => navigate("/courses"), 3000);
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        setCourseContent({ title: "", courseVideos: [] });
+
+        setTimeout(() => navigate("/courses"), 3000);
+      } else {
+        setError("Failed to create course. Please try again.");
+      }
     } catch (err) {
       console.error("Error creating course:", err);
       setError("Failed to create course. Please try again.");
@@ -167,10 +173,17 @@ const CreateCourse = () => {
             ref={videoLinkRef}
           />
           <div className="flex gap-4 justify-center lg:justify-start items-center my-6">
-            <Button onClick={handleAddVideo} className="px-8">
+            <Button
+              onClick={handleAddVideo}
+              className="px-8 focus:bg-slate-700"
+            >
               Add
             </Button>
-            <Button variant="destructive" onClick={handleCreateCourse}>
+            <Button
+              variant="destructive"
+              onClick={handleCreateCourse}
+              className="bg-blue-600"
+            >
               Create Course
             </Button>
           </div>
